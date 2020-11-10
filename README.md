@@ -6,3 +6,11 @@
 语言：Python 3.8
 
 框架：Tensorflow 2.0
+
+目前更新的模型：
+
+Sentence_bert
+
+Bert-Last_3embedding_concat情绪分类模型
+
+SQuAD 2020语言与智能技术竞赛：机器阅读理解任务 baseline模型 
