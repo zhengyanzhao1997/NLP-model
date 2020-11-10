@@ -30,3 +30,5 @@ def build_model_2(pretrained_path,config,MAX_LEN):
     model = tf.keras.models.Model(inputs=[ids, att], outputs=[start_logits,end_logits])
     optimizer = tf.keras.optimizers.Adam(learning_rate=3e-5)
     model.compile(loss='categorical_crossentropy', optimizer=optimizer)
+
+    return model
