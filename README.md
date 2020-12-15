@@ -16,3 +16,7 @@ Bert-Last_3embedding_concat情绪分类模型
 SQuAD 2020语言与智能技术竞赛：机器阅读理解任务 baseline模型 
 
 关系抽取——基于主语感知的层叠式指针网络
+
+关系抽取——基于 Muti_head_selection
+
+关系抽取——基于 Deep Biaffine Attention
