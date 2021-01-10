@@ -21,6 +21,6 @@ SQuAD 2020语言与智能技术竞赛：机器阅读理解任务 baseline模型 
 
 关系抽取——基于 Deep Biaffine Attention TF-NLP-model/model/train/关系抽取_Deep Biaffine Attention.py 
 
-Unified Language Model 新闻摘要生成 TF-NLP-model/model/train/Unified Language Model/
+Unified Language Model 新闻摘要生成 TF-NLP-model/model/train/Unified Language Model
 
 
