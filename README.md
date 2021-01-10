@@ -9,14 +9,15 @@
 
 目前更新的模型：
 
-Sentence_bert
+Sentence_bert TF-NLP-model/model/train/Train_Sentence-BERT.py
 
-Bert-Last_3embedding_concat情绪分类模型
+Bert-Last_3embedding_concat情绪分类模型 TF-NLP-model/model/train/Train_Bert-Last_3embedding_concat_classification.py
 
-SQuAD 2020语言与智能技术竞赛：机器阅读理解任务 baseline模型 
+SQuAD 2020语言与智能技术竞赛：机器阅读理解任务 baseline模型  TF-NLP-model/model/train/SQuAD_baseline.py
 
-关系抽取——基于主语感知的层叠式指针网络
+关系抽取——基于主语感知的层叠式指针网络 TF-NLP-model/model/train/三元组抽取_指针标注.py
 
-关系抽取——基于 Muti_head_selection
+关系抽取——基于 Muti_head_selection TF-NLP-model/model/train/关系抽取_Multi-head Selection.py
 
-关系抽取——基于 Deep Biaffine Attention
+关系抽取——基于 Deep Biaffine Attention TF-NLP-model/model/train/关系抽取_Deep Biaffine Attention.py 
+
