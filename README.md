@@ -5,7 +5,7 @@
 
 语言：Python 3.8
 
-框架：Tensorflow 2.0
+框架：Tensorflow 2.0 Transformers 3.1.0
 
 目前更新的模型：
 
