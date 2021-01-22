@@ -203,7 +203,7 @@ class AutoTitle(AutoRegressiveDecoder):
             ides_temp[i][get_len:end_] = output_ids[i]
             seg_id_temp[i][get_len:end_] = np.ones_like(output_ids[i])
             mask_att_temp[i] = unilm_mask_single(seg_id_temp[i])
-        return self.last_token(end_-1).predict([ides_temp,seg_id_temp,mask_att_temp])
+        return self.model.predict([ides_temp,seg_id_temp,mask_att_temp])[:,end_-1]
     
     def generate(self,text,tokenizer,maxlen,topk=1):
         max_c_len = maxlen - self.maxlen
