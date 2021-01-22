@@ -89,7 +89,7 @@ class AutoTitle(AutoRegressiveDecoder):
             ides_temp[i][get_len:end_] = output_ids[i]
             seg_id_temp[i][get_len:end_] = np.ones_like(output_ids[i])
             mask_att_temp[i] = unilm_mask_single(seg_id_temp[i])
-        prediction = self.last_token(end_-1).predict([ides_temp,seg_id_temp,mask_att_temp])
+        prediction = self.model.predict([ides_temp,seg_id_temp,mask_att_temp])[:,end_-1]
         '''
         假设现在的topK = 2 所以每次只predict 二组的可能输出 len(ides_temp) = 2
         那我们初始化[0,0] 代表每一组输出组目前的ngram情况
