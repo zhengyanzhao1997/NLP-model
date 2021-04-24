@@ -3,6 +3,7 @@
 
 具体代码解读可以follow我的博客 https://blog.csdn.net/weixin_45839693
 
+
 语言：Python 3.8
 
 框架：Tensorflow 2.0 Transformers 3.1.0
@@ -24,4 +25,13 @@ SQuAD 2020语言与智能技术竞赛：机器阅读理解任务 baseline模型 
 Unified Language Model 新闻摘要生成 TF-NLP-model/model/train/Unified Language Model
 
 NEZHA 相对位置模型（处理长文本）法律摘要生成 TF-NLP-model/model/train/NEZHA
+
+
+语言：Python 3.8
+
+框架：torch 1.8.0 Transformers 4.1.5
+
+目前更新的模型：
+
+
 
