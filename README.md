@@ -6,7 +6,7 @@
 
 语言：Python 3.8
 
-框架：Tensorflow 2.0 Transformers 3.1.0
+## 框架：Tensorflow 2.0 Transformers 3.1.0
 
 目前更新的模型：
 
@@ -27,9 +27,8 @@ Unified Language Model 新闻摘要生成 TF-NLP-model/model/train/Unified Langu
 NEZHA 相对位置模型（处理长文本）法律摘要生成 TF-NLP-model/model/train/NEZHA
 
 
-语言：Python 3.8
 
-框架：torch 1.8.0 Transformers 4.1.5
+## 框架：torch 1.8.0 Transformers 4.1.5
 
 目前更新的模型：
 
