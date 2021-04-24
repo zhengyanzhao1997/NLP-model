@@ -10,27 +10,33 @@
 
 目前更新的模型：
 
-Sentence_bert TF-NLP-model/model/train/Train_Sentence-BERT.py
+Sentence_bert NLP-model/model/model/Train_Sentence-BERT.py
 
-Bert-Last_3embedding_concat情绪分类模型 TF-NLP-model/model/train/Train_Bert-Last_3embedding_concat_classification.py
+Bert-Last_3embedding_concat情绪分类模型 NLP-model/model/model/Train_Bert-Last_3embedding_concat_classification.py
 
-SQuAD 2020语言与智能技术竞赛：机器阅读理解任务 baseline模型  TF-NLP-model/model/train/SQuAD_baseline.py
+SQuAD 2020语言与智能技术竞赛：机器阅读理解任务 baseline模型  NLP-model/model/model/SQuAD_baseline.py
 
-关系抽取——基于主语感知的层叠式指针网络 TF-NLP-model/model/train/三元组抽取_指针标注.py
+关系抽取——基于主语感知的层叠式指针网络 NLP-model/model/model/Information_extraction/三元组抽取_指针标注.py
 
-关系抽取——基于 Muti_head_selection TF-NLP-model/model/train/关系抽取_Multi-head Selection.py
+关系抽取——基于 Muti_head_selection NLP-model/model/model/Information_extraction/关系抽取_Multi-head Selection.py
 
-关系抽取——基于 Deep Biaffine Attention TF-NLP-model/model/train/关系抽取_Deep Biaffine Attention.py 
+关系抽取——基于 Deep Biaffine Attention NLP-model/model/model/Information_extraction/关系抽取_Deep Biaffine Attention.py 
 
-Unified Language Model 新闻摘要生成 TF-NLP-model/model/train/Unified Language Model
+Unified Language Model 新闻摘要生成 NLP-model/model/model/Unified Language Model
 
-NEZHA 相对位置模型（处理长文本）法律摘要生成 TF-NLP-model/model/train/NEZHA
+NEZHA 相对位置模型（处理长文本）法律摘要生成 NLP-model/model/model/NEZHA
+
+SDP 2021@NAACL LongSumm 第一名 模型集合 NLP-model/model/model/Longsumm
 
 
 
 ## 框架：torch 1.8.0 Transformers 4.1.5
 
 目前更新的模型：
+
+2021搜狐校园文本匹配算法大赛 P-tuning-Bert BaseLine NLP-model/model/model/Souhu_TextMatch
+
+2021搜狐校园文本匹配算法大赛 Layer_conditional_norm BaseLine NLP-model/model/model/Souhu_TextMatch
 
 
 
