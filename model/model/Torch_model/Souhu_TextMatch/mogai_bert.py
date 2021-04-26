@@ -21,8 +21,8 @@ import os
 import warnings
 from dataclasses import dataclass
 from typing import Optional, Tuple
-import torch
 import torch.utils.checkpoint
+import torch
 from torch import nn
 from torch.nn import CrossEntropyLoss, MSELoss
 
@@ -202,7 +202,6 @@ class BertEmbeddings(nn.Module):
         if inputs_embeds is None:
             inputs_embeds = self.word_embeddings(input_ids)
         token_type_embeddings = self.token_type_embeddings(token_type_ids)
-
         embeddings = inputs_embeds + token_type_embeddings
         if self.position_embedding_type == "absolute":
             position_embeddings = self.position_embeddings(position_ids)
@@ -215,6 +214,29 @@ class BertEmbeddings(nn.Module):
         embeddings = self.dropout(embeddings)
         return embeddings
 
+def relative_position_encoding(depth, max_length=512, max_relative_position=127):
+    vocab_size = max_relative_position * 2 + 1
+    range_vec = torch.arange(max_length)
+    range_mat = range_vec.repeat(max_length).view(max_length, max_length)
+    distance_mat = range_mat - torch.t(range_mat)
+    distance_mat_clipped = torch.clamp(distance_mat, -max_relative_position, max_relative_position)
+    final_mat = distance_mat_clipped + max_relative_position
+
+    embeddings_table = torch.zeros(vocab_size, depth)
+    position = torch.arange(0, vocab_size, dtype=torch.float).unsqueeze(1)
+    div_term = torch.exp(torch.arange(0, depth, 2).float() * (-math.log(10000.0) / depth))
+    embeddings_table[:, 0::2] = torch.sin(position * div_term)
+    embeddings_table[:, 1::2] = torch.cos(position * div_term)
+    embeddings_table = embeddings_table.unsqueeze(0).transpose(0, 1).squeeze(1)
+
+    flat_relative_positions_matrix = final_mat.view(-1)
+    one_hot_relative_positions_matrix = torch.nn.functional.one_hot(flat_relative_positions_matrix,
+                                                                    num_classes=vocab_size).float()
+    positions_encoding = torch.matmul(one_hot_relative_positions_matrix, embeddings_table)
+    my_shape = list(final_mat.size())
+    my_shape.append(depth)
+    positions_encoding = positions_encoding.view(my_shape)
+    return positions_encoding
 
 class BertSelfAttention(nn.Module):
     def __init__(self, config):
@@ -238,6 +260,11 @@ class BertSelfAttention(nn.Module):
         if self.position_embedding_type == "relative_key" or self.position_embedding_type == "relative_key_query":
             self.max_position_embeddings = config.max_position_embeddings
             self.distance_embedding = nn.Embedding(2 * config.max_position_embeddings - 1, self.attention_head_size)
+        elif self.position_embedding_type == "nezha":
+            self.relative_positions_encoding = relative_position_encoding(max_length=config.max_position_embeddings,
+                                                                     depth=self.attention_head_size,
+                                                                     max_relative_position=config.max_relative_position)
+
 
         self.is_decoder = config.is_decoder
 
@@ -295,6 +322,7 @@ class BertSelfAttention(nn.Module):
 
         # Take the dot product between "query" and "key" to get the raw attention scores.
         attention_scores = torch.matmul(query_layer, key_layer.transpose(-1, -2))
+        batch_size, num_attention_heads, from_seq_length, to_seq_length = attention_scores.size()
 
         if self.position_embedding_type == "relative_key" or self.position_embedding_type == "relative_key_query":
             seq_length = hidden_states.size()[1]
@@ -311,6 +339,22 @@ class BertSelfAttention(nn.Module):
                 relative_position_scores_query = torch.einsum("bhld,lrd->bhlr", query_layer, positional_embedding)
                 relative_position_scores_key = torch.einsum("bhrd,lrd->bhlr", key_layer, positional_embedding)
                 attention_scores = attention_scores + relative_position_scores_query + relative_position_scores_key
+
+        elif self.position_embedding_type == "nezha":
+            # seq_length = hidden_states.size()[1]
+            # relations_keys = self.relative_positions_encoding[:seq_length, :seq_length, :].to(hidden_states.device)
+            # relative_position_scores = torch.einsum("bhld,lrd->bhlr", query_layer, relations_keys)
+            # attention_scores += relative_position_scores
+            relations_keys = self.relative_positions_encoding[:to_seq_length, :to_seq_length, :].to(
+                hidden_states.device)
+            query_layer_t = query_layer.permute(2, 0, 1, 3)
+            query_layer_r = query_layer_t.contiguous().view(from_seq_length, batch_size * num_attention_heads,
+                                                            self.attention_head_size)
+            key_position_scores = torch.matmul(query_layer_r, relations_keys.permute(0, 2, 1))
+            key_position_scores_r = key_position_scores.view(from_seq_length, batch_size,
+                                                             num_attention_heads, from_seq_length)
+            key_position_scores_r_t = key_position_scores_r.permute(1, 2, 0, 3)
+            attention_scores += key_position_scores_r_t
 
         attention_scores = attention_scores / math.sqrt(self.attention_head_size)
         if attention_mask is not None:
@@ -329,6 +373,22 @@ class BertSelfAttention(nn.Module):
             attention_probs = attention_probs * head_mask
 
         context_layer = torch.matmul(attention_probs, value_layer)
+
+        if self.position_embedding_type == "nezha":
+            # seq_length = hidden_states.size()[1]
+            # relations_v = self.relative_positions_encoding[:seq_length, :seq_length, :].to(hidden_states.device)
+            # relative_position_scores = torch.einsum("bhjk,jkd->bhjd", attention_probs, relations_v)
+            # context_layer += relative_position_scores
+            relations_values = self.relative_positions_encoding[:to_seq_length, :to_seq_length, :].to(
+                hidden_states.device)
+            attention_probs_t = attention_probs.permute(2, 0, 1, 3)
+            attentions_probs_r = attention_probs_t.contiguous().view(from_seq_length, batch_size * num_attention_heads,
+                                                                     to_seq_length)
+            value_position_scores = torch.matmul(attentions_probs_r, relations_values)
+            value_position_scores_r = value_position_scores.view(from_seq_length, batch_size,
+                                                                 num_attention_heads, self.attention_head_size)
+            value_position_scores_r_t = value_position_scores_r.permute(1, 2, 0, 3)
+            context_layer = context_layer + value_position_scores_r_t
 
         context_layer = context_layer.permute(0, 2, 1, 3).contiguous()
         new_context_layer_shape = context_layer.size()[:-2] + (self.all_head_size,)
@@ -463,7 +523,8 @@ class BertLayer(nn.Module):
             self.crossattention = BertAttention(config)
         self.intermediate = BertIntermediate(config)
         self.output = BertOutput(config)
-        self.conditional_size = getattr(config, "conditional_size", None)
+        self.conditional_size = getattr(config,"conditional_size", None)
+
     def forward(
             self,
             hidden_states,
