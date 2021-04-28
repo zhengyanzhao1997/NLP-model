@@ -134,6 +134,7 @@ test_dataloader = DataLoader(testing_data, batch_size=batch_size)
 def train(dataloader, model, loss_fn, optimizer):
     size = len(dataloader.dataset)
     correct = 0
+    model.train()
     for batch, (data,y,c) in enumerate(dataloader):
         input_ids = data['input_ids'].to(device)
         attention_mask = data['attention_mask'].to(device)
