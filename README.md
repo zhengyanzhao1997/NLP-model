@@ -40,5 +40,5 @@ SDP 2021@NAACL LongSumm 第一名 模型集合 NLP-model/model/TF_model/Longsumm
 
 SimCSE 论文复现 无监督/有监督对比学习 NLP-model/model/Torch_model/SimCSE-Chinese
 
-
+嵌套实体命名识别 GlobalPointer、TPLinker、Tencent Muti-head、Deep Biaffine NLP-model/model/Torch_model/ExtractionEntities
 
