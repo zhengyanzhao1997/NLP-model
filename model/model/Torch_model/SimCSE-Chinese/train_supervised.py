@@ -136,7 +136,6 @@ def compute_loss(y_pred,lamda=0.05):
     return torch.mean(loss)
 
 def test(test_data,model):
-    model.eval() #意味着显示关闭丢弃dropout
     traget_idxs, source_idxs, label_list = test_data.get_data()
     with torch.no_grad():
         traget_input_ids = traget_idxs['input_ids'].to(device)
@@ -173,7 +172,9 @@ def train(dataloader,testdata, model, optimizer):
         if batch % 10 == 0:
             loss, current = loss.item(), batch * int(len(input_ids)/3)
             print(f"loss: {loss:>7f}  [{current:>5d}/{size:>5d}]")
+            model.eval() #意味着显示关闭丢弃dropout
             corrcoef = test(testdata,model)
+            model.train()
             print(f"corrcoef_test: {corrcoef:>4f}")
             if corrcoef > max_corrcoef:
                 not_up_batch = 0
