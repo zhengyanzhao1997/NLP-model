@@ -42,3 +42,4 @@ SimCSE 论文复现 无监督/有监督对比学习 NLP-model/model/Torch_model/
 
 嵌套实体命名识别 GlobalPointer、TPLinker、Tencent Muti-head、Deep Biaffine NLP-model/model/Torch_model/ExtractionEntities
 
+Efficient-GlobalPointer 联合事件抽取 NLP-model/model/Torch_model/ExtractionEntities/GPLinker_DUEE
