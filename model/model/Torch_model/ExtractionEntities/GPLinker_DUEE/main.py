@@ -78,7 +78,7 @@ class CustomDataset(Dataset):
         for idx, internal in enumerate(offset_mapping):
             if internal[0] <= index < internal[1]:
                 return idx
-        return None
+        return -1
 
     def get_label(self,d_events,offset_mapping):
         events = []
@@ -89,7 +89,7 @@ class CustomDataset(Dataset):
                 start, end = i, i + len(a) - 1
                 start_index = self.find_index(offset_mapping,start)
                 end_index = self.find_index(offset_mapping,end)
-                if start_index and end_index:
+                if start_index >= 0 and end_index >= 0:
                     events[-1].append((label, start_index, end_index))
         argu_labels = torch.zeros((len(self.labels),self.maxlen,self.maxlen))
         head_labels = torch.zeros(self.maxlen,self.maxlen)
